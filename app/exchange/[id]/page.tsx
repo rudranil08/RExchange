@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { useExchangeStore } from "@/lib/store/exchange-store";
 import { CATEGORY_LABELS, EXCHANGE_TYPE_LABELS, ListingStatus } from "@/lib/types";
 import { evaluateYearCompatibility } from "@/lib/matching/year-proximity";
+import { formatDeterministicDate } from "@/lib/date-utils";
 
 export default function ListingDetailPage({
   params,
@@ -185,7 +186,7 @@ export default function ListingDetailPage({
           </div>
 
           <div className="text-[11px] text-[#5F636A] sm:text-right">
-            Listed {new Date(listing.createdAt).toLocaleDateString()}
+            Listed {formatDeterministicDate(listing.createdAt)}
           </div>
         </div>
 

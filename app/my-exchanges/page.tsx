@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useExchangeStore } from "@/lib/store/exchange-store";
 import { Exchange, ExchangeStatus, CATEGORY_LABELS } from "@/lib/types";
+import { formatDeterministicDate } from "@/lib/date-utils";
 
 export default function MyExchangesPage() {
   const router = useRouter();
@@ -123,7 +124,7 @@ export default function MyExchangesPage() {
                   {/* Action */}
                   <div className="pt-2 flex items-center justify-between border-t border-white/10">
                     <span className="text-xs text-[#8B8F96]">
-                      Started {new Date(ex.createdAt).toLocaleDateString()}
+                      Started {formatDeterministicDate(ex.createdAt)}
                     </span>
                     <Button
                       size="sm"
@@ -208,8 +209,8 @@ export default function MyExchangesPage() {
                   <div className="pt-2 flex items-center justify-between border-t border-white/10 text-xs text-[#8B8F96]">
                     <span>
                       {ex.confirmedAt
-                        ? `Confirmed ${new Date(ex.confirmedAt).toLocaleDateString()}`
-                        : `Logged ${new Date(ex.createdAt).toLocaleDateString()}`}
+                        ? `Confirmed ${formatDeterministicDate(ex.confirmedAt)}`
+                        : `Logged ${formatDeterministicDate(ex.createdAt)}`}
                     </span>
                     <button
                       onClick={() => handleViewExchange(ex)}

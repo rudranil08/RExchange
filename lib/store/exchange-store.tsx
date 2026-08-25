@@ -33,7 +33,7 @@ interface ExchangeStoreContextType {
   colleges: College[];
   activeCollege: College | null;
   onboardingSkills: string[];
-  login: (email: string, collegeId: string) => User;
+  login: (email: string, collegeId: string) => User | null;
   signup: (data: {
     email: string;
     name: string;
@@ -42,6 +42,7 @@ interface ExchangeStoreContextType {
     year: string;
     selectedSkills: string[];
   }) => User;
+  updateUserProfile: (userId: string, data: Partial<User>) => User | null;
   logout: () => void;
   switchUser: (userId: string) => void;
 
@@ -126,9 +127,10 @@ export function ExchangeStoreProvider({ children }: { children: ReactNode }) {
 
   // === Authentication & Onboarding Actions ===
 
-  const login = (email: string, collegeId: string): User => {
+  const login = (email: string, collegeId: string): User | null => {
+    const cleanEmail = email.trim().toLowerCase();
     const existing = users.find(
-      (u) => u.email.toLowerCase() === email.toLowerCase() && u.collegeId === collegeId
+      (u) => u.email.toLowerCase() === cleanEmail && u.collegeId === collegeId
     );
 
     if (existing) {
@@ -136,29 +138,7 @@ export function ExchangeStoreProvider({ children }: { children: ReactNode }) {
       return existing;
     }
 
-    // Auto-provision demo student session for frictionless testing
-    const namePart = email.split('@')[0] || 'Campus Student';
-    const formattedName = namePart
-      .split('.')
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(' ');
-
-    const newUser: User = {
-      id: `user_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
-      email,
-      name: formattedName,
-      collegeId,
-      course: 'General Studies',
-      year: 'Junior',
-      contactHandle: email,
-      selectedSkills: ['Python', 'Writing'],
-      derivedSkills: [],
-      createdAt: new Date().toISOString(),
-    };
-
-    setUsers((prev) => [newUser, ...prev]);
-    setActiveUserId(newUser.id);
-    return newUser;
+    return null;
   };
 
   const signup = (data: {
@@ -169,13 +149,32 @@ export function ExchangeStoreProvider({ children }: { children: ReactNode }) {
     year: string;
     selectedSkills: string[];
   }): User => {
+    const cleanEmail = data.email.trim().toLowerCase();
+    const existing = users.find(
+      (u) => u.email.toLowerCase() === cleanEmail && u.collegeId === data.collegeId
+    );
+
+    if (existing) {
+      const updatedUser: User = {
+        ...existing,
+        name: data.name.trim() || existing.name,
+        course: data.course.trim() || existing.course,
+        year: data.year.trim() || existing.year,
+        selectedSkills: data.selectedSkills && data.selectedSkills.length > 0 ? data.selectedSkills : existing.selectedSkills,
+      };
+      setUsers((prev) => prev.map((u) => (u.id === existing.id ? updatedUser : u)));
+      setActiveUserId(existing.id);
+      return updatedUser;
+    }
+
     const newUser: User = {
       id: `user_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
       email: data.email.trim(),
       name: data.name.trim(),
       collegeId: data.collegeId,
-      course: data.course.trim(),
-      year: data.year.trim(),
+      course: data.course.trim() || "General Engineering & Science",
+      year: data.year.trim() || "Junior",
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(data.name.trim())}`,
       contactHandle: data.email.trim(),
       selectedSkills: data.selectedSkills,
       derivedSkills: [],
@@ -185,6 +184,20 @@ export function ExchangeStoreProvider({ children }: { children: ReactNode }) {
     setUsers((prev) => [newUser, ...prev]);
     setActiveUserId(newUser.id);
     return newUser;
+  };
+
+  const updateUserProfile = (userId: string, data: Partial<User>): User | null => {
+    let updated: User | null = null;
+    setUsers((prev) =>
+      prev.map((u) => {
+        if (u.id === userId) {
+          updated = { ...u, ...data };
+          return updated;
+        }
+        return u;
+      })
+    );
+    return updated;
   };
 
   const logout = () => {
@@ -519,6 +532,7 @@ export function ExchangeStoreProvider({ children }: { children: ReactNode }) {
         onboardingSkills: ONBOARDING_SKILLS,
         login,
         signup,
+        updateUserProfile,
         logout,
         switchUser,
         searchQuery,

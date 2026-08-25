@@ -15,10 +15,12 @@ import {
   Plus,
   Compass,
   ArrowLeftRight,
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useExchangeStore } from "@/lib/store/exchange-store";
 import { Exchange, ExchangeStatus, CATEGORY_LABELS } from "@/lib/types";
+import { formatDeterministicDate } from "@/lib/date-utils";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -28,6 +30,7 @@ export default function ProfilePage() {
     exchanges,
     listings,
     setActiveExchange,
+    logout,
   } = useExchangeStore();
 
   // If no user is logged in, redirect to login
@@ -134,19 +137,33 @@ export default function ProfilePage() {
           </div>
 
           <div className="flex sm:flex-col items-center sm:items-end gap-2">
-            <Link href="/login">
+            <div className="flex items-center gap-2">
+              <Link href="/login">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="text-xs h-8 px-3 border border-white/10 bg-[#111315] text-[#8B8F96] hover:text-[#F5F5F5]"
+                >
+                  <span>Switch Profile</span>
+                </Button>
+              </Link>
               <Button
-                variant="secondary"
+                variant="ghost"
                 size="sm"
-                className="text-xs h-8 px-3 border border-white/10 bg-[#111315] text-[#8B8F96] hover:text-[#F5F5F5]"
+                onClick={() => {
+                  logout();
+                  router.push("/login");
+                }}
+                className="text-xs h-8 px-2.5 text-[#8B8F96] hover:text-[#F5F5F5]"
               >
-                <span>Switch Student Profile</span>
+                <LogOut className="h-3.5 w-3.5 mr-1" />
+                <span>Sign Out</span>
               </Button>
-            </Link>
+            </div>
             <Link href="/exchange/new">
               <Button
                 size="sm"
-                className="text-xs h-8 px-3 font-semibold bg-[#F5F5F5] text-[#08090A] hover:bg-white"
+                className="text-xs h-8 px-3 font-semibold bg-[#F5F5F5] text-[#08090A] hover:bg-white w-full"
               >
                 <Plus className="mr-1 h-3.5 w-3.5" />
                 <span>New Exchange</span>
@@ -301,7 +318,7 @@ export default function ProfilePage() {
 
                   <div className="pt-2 flex items-center justify-between border-t border-white/10 text-xs">
                     <span className="text-[#8B8F96]">
-                      Started {new Date(ex.createdAt).toLocaleDateString()}
+                      Started {formatDeterministicDate(ex.createdAt)}
                     </span>
                     <Button
                       size="sm"
@@ -402,7 +419,7 @@ export default function ProfilePage() {
 
                   <div className="pt-2 flex items-center justify-between border-t border-white/10 text-xs">
                     <span className="text-[#8B8F96]">
-                      Completed {ex.confirmedAt ? new Date(ex.confirmedAt).toLocaleDateString() : new Date(ex.createdAt).toLocaleDateString()}
+                      Completed {formatDeterministicDate(ex.confirmedAt || ex.createdAt)}
                     </span>
                     <Button
                       size="sm"
