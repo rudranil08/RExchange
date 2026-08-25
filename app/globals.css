@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Dark Premium Editorial Design Tokens */
+  --background: #08090A;
+  --surface: #0D0F11;
+  --surface-elevated: #111315;
+  --surface-elevated-2: #16191D;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+
+  --foreground: #F5F5F5;
+  --muted-foreground: #8B8F96;
+  --subtle-foreground: #5F636A;
+
+  /* Semantic Value Exchange Tokens (Subtle Indicators Only) */
+  --have: #22C55E;
+  --have-muted: rgba(34, 197, 94, 0.1);
+  --have-border: rgba(34, 197, 94, 0.25);
+
+  --need: #A78BFA;
+  --need-muted: rgba(167, 139, 250, 0.1);
+  --need-border: rgba(167, 139, 250, 0.25);
+
+  --match: #22C55E;
+
+  /* Primary Button: White Fill, Dark Text */
+  --primary: #F5F5F5;
+  --primary-hover: #FFFFFF;
+  --primary-foreground: #08090A;
+}
+
+body {
+  color: var(--foreground);
+  background-color: var(--background);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-mono-meta {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* Hairline rules */
+.hairline-b {
+  border-bottom: 1px solid var(--border);
+}
+
+.hairline-t {
+  border-top: 1px solid var(--border);
+}
+
+.hairline-r {
+  border-right: 1px solid var(--border);
+}
+
+.hairline-l {
+  border-left: 1px solid var(--border);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+}
